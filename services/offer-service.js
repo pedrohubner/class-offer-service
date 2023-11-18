@@ -90,12 +90,16 @@ function registerStudentOrPersonToClassOffer(request) {
     if (type === TipoPessoaEnum.PROFESSOR) {
         classOffer.hasTeacherVacancies = false;
         person.classes.push(classOffer);
+        //salvar matéria pra não ter mais vaga
+        //salvar usuário para persistir classe
         return person;
     }
 
     const newMaximumNumberOfStudents = classOffer.maximumNumberOfStudents - 1;
     classOffer.hasStudentVacancies = newMaximumNumberOfStudents !== 0;
     person.classes.push(classOffer);
+    //salvar matéria pra não ter mais vaga
+    //salvar usuário para persistir classe
     return person;
 }
 
