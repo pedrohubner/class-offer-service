@@ -1,14 +1,21 @@
-// const petService = require("../services/teacher-service");
+const express = require('express')
+const router = express.Router()
+const teacherService = require('../services/teacher-service')
 
-// module.exports = function (app) {
-//     app.get('/pet', (req, res) => {
-//         let obj = petService.getPets();
-//         res.status(200).send(obj);
-//     });
+router.get('/teacher', (req, res) => {
+    teacherService.getTeacher((err, result) => {
+        if(err) throw err;
+        res.send(result)
+    })
+})
 
-//     app.get('/pet/:id', (req, res) => {
-//         const id = parseInt(req.params.id);
-//         let obj = petService.getPetById(id);
-//         res.status(200).send(obj);
-//     });
-// };
+
+router.post('/teacher', (req, res) => {
+    const newTeacher = req.body;
+    teacherService.addTeacher(newTeacher, (err, result) => {
+        if(err) throw err;
+        res.status(201).send(`Teacher added ${result}`)
+    })
+})
+
+module.exports = router 
