@@ -1,13 +1,20 @@
-// const service = require("../services/student-service");
+const express = require('express')
+const router = express.Router();
+const studentService = require('../services/student-service');
 
-// module.exports = function (app) {
-//     app.get('/customer/my-pets', (req, res) => {
-//         let obj = service.getCustomerPets();
-//         res.status(200).send(obj);
-//     });
+router.get('/students', (req, res) => {
+    studentService.getStudents((err, result) => {
+        if (err) throw err;
+        res.send(result)
+    })
+})
 
-//     app.get('/customer/menu', (req, res) => {
-//         let obj = service.getCustomerMenu();
-//         res.status(200).send(obj);
-//     });
-// };
+router.post('/students', (req, res) => {
+    const newStudent = req.body;
+    studentService.addStudent(newStudent, (err, result) => {
+        if (err) throw err;
+        res.status(201).send(`Student added: ${result}`)
+    })
+})
+
+module.exports = router;
