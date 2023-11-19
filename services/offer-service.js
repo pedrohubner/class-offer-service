@@ -5,16 +5,18 @@ module.exports = {
     registerStudentOrPersonToClassOffer
 }
 
-function registerClassOffer(request) {
-    return [];
+const offerController = require("../controllers/offer-controller")
+const personController = require("../controllers/person-controller")
+
+function registerClassOffer(req, res) {
+    return offerController.createClassOffer(req, res);
 }
 
-function getClassesForStudents(request) {
-    const classes = buildClassesForStudents();
+function getClassesForStudents(req, res) {
+    const classes = offerController.getClassOffers(req, res);
     if (!classes.length) return [];
-
-    return classes
-        .filter(curso => filterStudentAvailableClasses(request, curso));
+    const filteredClasses = classes.filter(curso => filterStudentAvailableClasses(request, curso));
+    return getFilteredClasses(filteredClasses);
 }
 
 function filterStudentAvailableClasses(request, curso) {
@@ -23,35 +25,11 @@ function filterStudentAvailableClasses(request, curso) {
         && isEquals(request.schoolDays, curso.schoolDays);
 }
 
-function isEquals(request, curso) {
-    return isNullOrUndefined(request) ? true : request === curso;
-}
-
-function buildClassesForStudents() {
-    const cursos = [];
-    const curso = {
-        id: 1,
-        title: "Programação Back-End",
-        maximumNumberOfStudents: 80,
-        type: "SEMI_ANNUAL",
-        initialDate: "2024-02-15",
-        finalDate: "2024-06-15",
-        schoolDays: "WEDNESDAY",
-        period: "AFTERNOON",
-        openingTime: 14,
-        closingTime: 15,
-        hasStudentVacancies: true
-    };
-    cursos.push(curso);
-    return cursos;
-}
-
-function getClassesForTeachers(request) {
-    const classes = buildClassesForTeachers();
+function getClassesForTeachers(req, res) {
+    const classes = offerController.getClassOffers(req, res);
     if (!classes.length) return [];
-
-    return classes
-        .filter(curso => filterTeacherAvailableClasses(request, curso));
+    const filteredClasses = classes.filter(curso => filterTeacherAvailableClasses(request, curso));
+    return getFilteredClasses(filteredClasses);
 }
 
 function filterTeacherAvailableClasses(request, curso) {
@@ -60,28 +38,20 @@ function filterTeacherAvailableClasses(request, curso) {
         && isEquals(request.schoolDays, curso.schoolDays);
 }
 
-function buildClassesForTeachers() {
-    const cursos = [];
-    const curso = {
-        id: 1,
-        title: "Programação Back-End",
-        maximumNumberOfStudents: 80,
-        type: "SEMI_ANNUAL",
-        initialDate: "2024-02-15",
-        finalDate: "2024-06-15",
-        schoolDays: "WEDNESDAY",
-        period: "AFTERNOON",
-        openingTime: 14,
-        closingTime: 15,
-        hasTeacherVacancies: true
-    };
-    cursos.push(curso);
-    return cursos;
+function isEquals(request, curso) {
+    return isNullOrUndefined(request) ? true : request === curso;
+}
+
+function getFilteredClasses(filteredClasses) {
+    if (filteredClasses.length === 0) {
+        throw new NoAvailableClassesError('No classes available for the specified criteria.');
+    }
+    return filteredClasses;
 }
 
 function registerStudentOrPersonToClassOffer(request) {
-    const person = getPersonId(request.userId, request.type);
-    const classOffer = getClassOfferById(request.classOfferId);
+    const person = personController.getPersonById(request);
+    const classOffer = offerController.getClassOfferById(request);
 
     if (!classOffer.hasTeacherVacancies && !classOffer.hasStudentVacancies) {
         throw new Error("Não possui mais vaga");
@@ -90,61 +60,15 @@ function registerStudentOrPersonToClassOffer(request) {
     if (type === TipoPessoaEnum.PROFESSOR) {
         classOffer.hasTeacherVacancies = false;
         person.classes.push(classOffer);
-        //salvar matéria pra não ter mais vaga
-        //salvar usuário para persistir classe
+        offerController.updateClassOffer(classOffer);
+        personController.updatePerson(person);
         return person;
     }
 
     const newMaximumNumberOfStudents = classOffer.maximumNumberOfStudents - 1;
     classOffer.hasStudentVacancies = newMaximumNumberOfStudents !== 0;
     person.classes.push(classOffer);
-    //salvar matéria pra não ter mais vaga
-    //salvar usuário para persistir classe
+    offerController.updateClassOffer(classOffer);
+    personController.updatePerson(person);
     return person;
-}
-
-function getClassOfferById(id) {
-    const curso = new Curso();
-    curso.id = 1;
-    curso.title = "Programação Back-End";
-    curso.maximumNumberOfStudents = 80;
-    curso.type = "SEMI_ANNUAL";
-    curso.initialDate = "2024-02-15";
-    curso.finalDate = "2024-06-15";
-    curso.schoolDays = "WEDNESDAY";
-    curso.period = "AFTERNOON";
-    curso.openingTime = 14;
-    curso.closingTime = 15;
-    curso.hasTeacherVacancies = true;
-    curso.hasStudentVacancies = true;
-    return curso;
-}
-
-function getPersonId(id, type) {
-    if (type === TipoPessoaEnum.PROFESSOR) return professor();
-    return aluno();
-}
-
-function professor() {
-    const usuario = new UsuarioService.Usuario();
-    usuario.id = 1;
-    usuario.name = "JOAO SILVA";
-    usuario.type = TipoPessoaEnum.PROFESSOR;
-    usuario.document = "0123456789";
-    usuario.email = "joaosilva@gmail.com";
-    usuario.maximumNumberOfClasses = 6;
-    usuario.classes = [];
-    return usuario;
-}
-
-function aluno() {
-    const usuario = new UsuarioService.Usuario();
-    usuario.id = 1;
-    usuario.name = "JOAO SILVA";
-    usuario.type = TipoPessoaEnum.ALUNO;
-    usuario.document = "0123456789";
-    usuario.email = "joaosilva@gmail.com";
-    usuario.maximumNumberOfClasses = 6;
-    usuario.classes = [];
-    return usuario;
 }
