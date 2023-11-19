@@ -4,7 +4,7 @@
   "description": "Projeto para desafio de Programação Back-End",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
   "author": "Pedro Naã Hübner",
   "license": "ISC",
@@ -12,5 +12,8 @@
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "mongoose": "^8.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
