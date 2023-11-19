@@ -3,19 +3,14 @@ const router = express.Router()
 const teacherService = require('../services/teacher-service')
 
 router.get('/teacher', (req, res) => {
-    teacherService.getTeacher((err, result) => {
-        if(err) throw err;
-        res.send(result)
-    })
+    let obj = teacherService.getTeacher(req);
+    res.status(200).send(obj);
 })
 
 
 router.post('/teacher', (req, res) => {
-    const newTeacher = req.body;
-    teacherService.addTeacher(newTeacher, (err, result) => {
-        if(err) throw err;
-        res.status(201).send(`Teacher added ${result}`)
-    })
+    let obj = teacherService.addTeacher(req);
+    res.status(201).send(obj);
 })
 
 module.exports = router 

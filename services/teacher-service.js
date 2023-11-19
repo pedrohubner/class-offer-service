@@ -1,13 +1,15 @@
-const getTeacher = (callback) => {
-    db.collection('teachers').find({}).toArray(callback)
+const personController = require("../controllers/person-controller");
+
+const getTeacher = (req) => {
+    return personController.getPersonById(req);
 }
 
 
 const addTeacher = (newTeacher, callback) => {
-    db.collection('teachers').insertOne(newTeacher, callback)
+    return personController.createPerson(req);
 }
 
 module.exports = {
-    getTeacher, 
+    getTeacher,
     addTeacher
 }

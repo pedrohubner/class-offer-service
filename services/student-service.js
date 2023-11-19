@@ -1,12 +1,14 @@
-module.exports = {
-    getStudents,
-    addStudent
-}
+const personController = require("../controllers/person-controller");
 
-const getStudents = (callback) => {
-    db.collection('students').find({}).toArray(callback)
+const getStudents = (req) => {
+    return personController.getPersonById(req);
 }
 
 const addStudent = (newStudent, callback) => {
-    db.collection('students').insertOne(newStudent, callback)
+    return personController.createPerson(req);
+}
+
+module.exports = {
+    getStudents,
+    addStudent
 }
