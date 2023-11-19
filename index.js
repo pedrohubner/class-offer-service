@@ -1,17 +1,15 @@
-const app = require('express')();
-const bodyParser = require("body-parser");
+const conn = require("./db/conn");
+const express = require('express');
+const routes = require('./routes')
+const app = express();
 const PORT = 8080;
 
-app.use(bodyParser.json());
-
-const conn = require("./db/conn");
+app.use(express.json());
 
 conn();
 
-var route = require('./routes/offer-route')(app);
-var route = require('./routes/student-route')(app);
-var route = require('./routes/teacher-route')(app);
+routes(app);
 
 app.listen(PORT, () => {
     console.log('Servidor rodando na porta ' + PORT);
-})
+});
