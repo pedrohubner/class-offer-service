@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 
 const classOfferSchema = new Schema({
     id: { type: Number, required: true },
@@ -17,4 +18,7 @@ const classOfferSchema = new Schema({
 
 const ClassOffer = model('ClassOffer', classOfferSchema);
 
-export default ClassOffer;
+module.exports = {
+    ClassOffer,
+    classOfferSchema
+}
