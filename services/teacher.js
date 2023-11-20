@@ -5,7 +5,7 @@ const getTeacher = (req) => {
 }
 
 
-const addTeacher = (newTeacher, callback) => {
+const addTeacher = (req) => {
     return personController.createPerson(req);
 }
 

@@ -1,7 +1,7 @@
 const studentService = require('../services/student');
 
 const getStudents = function (app) {
-    app.get('/students', (req, res) => {
+    app.get('/student', (req, res) => {
         const obj = studentService.getStudents(req);
         res.status(200).send(obj);
     })

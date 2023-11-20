@@ -4,7 +4,7 @@ const getStudents = (req) => {
     return personController.getPersonById(req);
 }
 
-const addStudent = (newStudent, callback) => {
+const addStudent = (req) => {
     return personController.createPerson(req);
 }
 
